@@ -38,15 +38,22 @@ ui <- navbarPage(
        )
     )
   ),
-           
+  
   tabPanel("Times",
            
-           h3("Quantidade de vitórias por time"),
-           tabPanel("tabela1", dataTableOutput("tabela1")),
-           
-           h3("Quantidade de prêmios de melhor jogadora da partida por time"),
-           tabPanel("tabela2", dataTableOutput("tabela2")),
+    navbarPage(
+      theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
+      "Análises",
+      tabPanel("Vitórias",
+         h3("Quantidade de vitórias por time"),
+         tabPanel("tabela1", dataTableOutput("tabela1"))
+      ),
+      
+      tabPanel("Melhor da partida",
+       h3("Quantidade de prêmios de melhor jogadora da partida por time"),
+       tabPanel("tabela2", dataTableOutput("tabela2"))
+      )
+    ) 
   )
-  
 )
 
