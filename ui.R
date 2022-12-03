@@ -6,22 +6,32 @@ ui <- navbarPage(
   
   "Superliga Brasileira de Voleibol Feminino (21/22)",
   tabPanel("Jogadoras",
-           tabsetPanel(
-             h3("Quantidade de Erros de recepção por recepções tentadas"),
-             h6("Destaque um ponto para informações detalhadas"),
-             tabPanel("Recepção", plotOutput("plot1", brush = "plot_brush"), tableOutput("table2"))
-           ),
-           
-           tabsetPanel(
-             sidebarPanel(
-               selectInput('ycol','Y Variable', vars),
-               selected = "Servico_Ace"
-            ),
-            tabPanel("Stats",
-               plotlyOutput('plot')
-             )
+    
+     navbarPage(
+       theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
+       "Análises",
+       
+       tabPanel("Erros e acertos",
+           h3("Quantidade de erros e acertos por estatística"),
+           h6("Destaque um ponto para informações detalhadas"),
+           plotOutput("plot1", brush = "plot_brush"), 
+           tableOutput("table1")
+      ),
+      
+       tabPanel('Tentativa',
+         tabsetPanel(
+           sidebarPanel(
+             selectInput('ycol','Y Variable', vars),
+             selected = "Servico_Ace"
+          ),
+          tabPanel("Stats",
+             plotlyOutput('plot')
            )
+         )
+       )
+    )
   ),
+           
   tabPanel("Times",
            
            h3("Quantidade de vitórias por time"),

@@ -19,19 +19,22 @@ server <- function(input, output, session) {
   
   # Aba jogadoras
   
-  Rec <-  base |> 
-    group_by(Jogadora, Time) %>%
-    summarise(Quantidade_de_Recepções = sum(Recepcao_Tot, na.rm = T), Erros_de_Recepção = sum(Recepcao_Err, na.rm = T)) %>%
-    mutate('Proporção entre Erros e Recepções' = Erros_de_Recepção / Quantidade_de_Recepções) %>%
-    filter(Quantidade_de_Recepções > 100)
+  df_stats <-  base |> 
+    group_by(Jogadora, Time) |>
+    summarise(
+      recepcoes_total = sum(Recepcao_Tot, na.rm = T), 
+      recepcoes_erro = sum(Recepcao_Err, na.rm = T),
+      recepcoes_prop = recepcoes_erro / recepcoes_total
+    ) |>
+    filter(recepcoes_total > 100)
   
   output$plot1 <- renderPlot({
-    ggplot(Rec, mapping = aes(x = Quantidade_de_Recepções, y = Erros_de_Recepção)) +
+    ggplot(df_stats, mapping = aes(x = recepcoes_total, y = recepcoes_erro)) +
       geom_point()
   })
   
-  output$table2 <- renderTable({
-    brushedPoints(Rec, input$plot_brush)
+  output$table1 <- renderTable({
+    brushedPoints(df_stats, input$plot_brush)
   })
   
 # Rererência: https://community.plotly.com/t/incorporate-a-plotly-graph-into-a-shiny-app/5329
