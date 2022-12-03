@@ -19,7 +19,8 @@ ui <- navbarPage(
              selected = "ataques"
            ),
            plotOutput("plot1", brush = "plot_brush"),
-           tableOutput("table1")
+           uiOutput("table_brush")
+           # tableOutput("table1")
            # plotOutput("plot1", brush = "plot_brush"), 
            # tableOutput("table1")
       ),

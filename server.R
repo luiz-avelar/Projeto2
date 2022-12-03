@@ -53,10 +53,16 @@ server <- function(input, output, session) {
       )
   })
   
-  output$table1 <- renderTable({
-    brushedPoints(df_chosen(), input$plot_brush)
+  output$table_brush <- renderUI({
+    if(is.null(input$plot_brush)){
+      h4("Destaque uma área no gráfico informações detalhadas")
+    } else {
+      renderTable({
+        brushedPoints(df_chosen(), input$plot_brush)
+      })
+    }
   })
-  
+    
 # Rererência: https://community.plotly.com/t/incorporate-a-plotly-graph-into-a-shiny-app/5329
   
   y <- reactive({
