@@ -1,4 +1,4 @@
-vars <- c("Servico_Err","Servico_Ace","Recepcao_Tot","Recepcao_Err","Ataque_Exc","Ataque_Err","Ataque_Blk","Bloqueio_Pts")
+stats <- c("recepcoes", "ataques")
    
 ui <- navbarPage(
   
@@ -11,18 +11,24 @@ ui <- navbarPage(
        theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
        "Análises",
        
-       tabPanel("Erros e acertos",
-           h3("Quantidade de erros e acertos por estatística"),
+       tabPanel("Tentativas e erros",
+           h3("Quantidade de tentativas e erros por estatística"),
            h6("Destaque um ponto para informações detalhadas"),
-           plotOutput("plot1", brush = "plot_brush"), 
+           sidebarPanel(
+             selectInput('stat','Estatística', stats),
+             selected = "ataques"
+           ),
+           plotOutput("plot1", brush = "plot_brush"),
            tableOutput("table1")
+           # plotOutput("plot1", brush = "plot_brush"), 
+           # tableOutput("table1")
       ),
       
        tabPanel('Tentativa',
          tabsetPanel(
            sidebarPanel(
-             selectInput('ycol','Y Variable', vars),
-             selected = "Servico_Ace"
+             selectInput('stat','Estatística', stats),
+             selected = "ataques"
           ),
           tabPanel("Stats",
              plotlyOutput('plot')

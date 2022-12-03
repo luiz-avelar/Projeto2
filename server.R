@@ -24,17 +24,37 @@ server <- function(input, output, session) {
     summarise(
       recepcoes_total = sum(Recepcao_Tot, na.rm = T), 
       recepcoes_erro = sum(Recepcao_Err, na.rm = T),
-      recepcoes_prop = recepcoes_erro / recepcoes_total
-    ) |>
-    filter(recepcoes_total > 100)
-  
+      recepcoes_prop = recepcoes_erro / recepcoes_total,
+      ataques_total = sum(Ataque_Exc, na.rm = T), 
+      ataques_erro = sum(Ataque_Err, na.rm = T),
+      ataques_prop = ataques_erro / ataques_total
+    )
+
+    df_chosen <- reactive({
+      df_stats |>
+        select(
+          glue(input$stat, '_total'),
+          glue(input$stat, '_erro'),
+          glue(input$stat, '_prop')
+        ) |>
+        rename(
+          quantidade_tentativas = glue(input$stat, '_total'),
+          quantidade_erros = glue(input$stat, '_erro'),
+          proporcao = glue(input$stat, '_prop')
+        )
+    })
+    
   output$plot1 <- renderPlot({
-    ggplot(df_stats, mapping = aes(x = recepcoes_total, y = recepcoes_erro)) +
-      geom_point()
+    ggplot(df_chosen(), mapping = aes(x = quantidade_tentativas, y = quantidade_erros)) +
+      geom_point() + 
+      labs(
+        x = "Quantidade de Tentativas",
+        y = "Quantidade de Erros"
+      )
   })
   
   output$table1 <- renderTable({
-    brushedPoints(df_stats, input$plot_brush)
+    brushedPoints(df_chosen(), input$plot_brush)
   })
   
 # Rererência: https://community.plotly.com/t/incorporate-a-plotly-graph-into-a-shiny-app/5329
