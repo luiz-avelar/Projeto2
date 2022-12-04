@@ -5,6 +5,32 @@ ui <- navbarPage(
   theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
   
   "Superliga Brasileira de Voleibol Feminino (21/22)",
+  tabPanel("Sobre",
+    fluidRow(
+      p("O banco de dados “Brazilian Volleyball Superliga 2021/22 (Women)”, disponível", a("na plataforma Kaggle", href="https://www.kaggle.com/datasets/smnlgn/superliga-202122"), "é um banco de dados que contém informações estatísticas de todas as jogadoras para cada partida disputada na Superliga Feminina 2021/22, que é o Campeonato Brasileiro Interclubes, organizado pela Confederação Brasileira de Clubes.")
+    ),
+    p("Essa base de informações está disponibilizada em formato csv, com tamanho aproximado de 501Kb. O banco é composto por 21 variávies e 3161 observações, sendo elas desde o primeiro jogo realizado em 28/10/2021 entre Brasília Vôlei e Maringá Vôlei, até o segundo jogo da grande final entre Minas Tênis Clube e Praia Clube no dia 29/04/2022."),
+    p("Dentre as variávies, pode-se destacar:"),
+    tags$ul(
+      tags$li("Equipe vencedora;"),
+      tags$li("Jogadora;"),
+      tags$li("Quantidade de aces feitos;"),
+      tags$li("Quantidade de servições desperdiçados;"),
+      tags$li("Pontos de bloqueio;"),
+      tags$li("Quantidade de ataques executados e errados;"),
+      tags$li("Quantidade de recepções executadas e erradas;"),
+      tags$li("Fase da partida (Playoff, Classificatória;"),
+      tags$li("Posição em que a jogadora iniciou o set.")
+    ),
+    p("Apesar de ser um banco de dados bem completo, algumas informações relevantes, tais como a posição da jogadora, quantidade de pontos feitos e o vencedor de cada set não estavam presentes no dataset. Estas variáveis poderiam ser interessantes para análises mais completas."),
+    p("O Shiny dashboard desenvolvido a partir deste banco de dados leva em consideração o formado do mesmo, por isso foi dividido em três abas:"), 
+    tags$ul(
+      tags$li(tags$strong("Times:"), "análises levando em consideração o agrupamento por time;"),
+      tags$li(tags$strong("Jogadoras:"), "análises levando em consideração o agrupamento por jogadora;"),
+      tags$li(tags$strong("Geral:"), "análises gerais sobre todo o conjunto de dados.")
+    )
+  ),
+  
   tabPanel("Jogadoras",
     
      navbarPage(
