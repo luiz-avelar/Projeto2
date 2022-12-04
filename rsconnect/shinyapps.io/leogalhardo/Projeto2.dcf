@@ -5,9 +5,9 @@ account: leogalhardo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7809844
-bundleId: 6590062
+bundleId: 6590079
 url: https://leogalhardo.shinyapps.io/Projeto2/
-when: 1670185912.66223
-lastSyncTime: 1670185912.66223
+when: 1670186318.922
+lastSyncTime: 1670186318.922
 asMultiple: FALSE
 asStatic: FALSE

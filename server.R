@@ -12,7 +12,7 @@ names(base) <- c("SET_1","SET_2","SET_3","SET_4","SET_5","Jogadora","Time","Part
 server <- function(input, output, session) {
   
   # Aba de times
-  ##
+  
   df_stats_team <-  base |> 
     group_by(Time) |>
     summarise(
@@ -58,7 +58,7 @@ server <- function(input, output, session) {
       })
     }
   })
-  ##
+  
   output$tabela1 <- renderDataTable({
     filtro <- switch(input$fase_vitorias,
                    "classificatoria" = "playoffs",
