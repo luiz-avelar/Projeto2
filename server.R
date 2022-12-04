@@ -147,8 +147,8 @@ server <- function(input, output, session) {
   })
   
   output$boxplot1 <- renderPlot({
-    ggplot(df_fund) +
-      geom_boxplot(mapping = aes(Cat, filtro_fund())) + 
+    ggplot(df_fund) + aes(x= Cat,y= eval(parse(text = filtro_fund()))) +
+      geom_boxplot() + 
       labs(
         x = "Fase secundária do torneio",
         y = "Quantidade"
