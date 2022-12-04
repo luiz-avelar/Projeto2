@@ -1,7 +1,7 @@
 library(shiny)
 library(tidyverse)
 library(DT)
-library(plotly)
+library(glue)
 
 base <- read.csv("superliga_202122.csv")
 names(base) <- c("SET_1","SET_2","SET_3","SET_4","SET_5","Jogadora","Time","Partida","Vencedor","Servico_Err","Servico_Ace","Recepcao_Tot","Recepcao_Err","Ataque_Exc","Ataque_Err","Ataque_Blk","Bloqueio_Pts","Fase","Cat","Jogo","VV")
