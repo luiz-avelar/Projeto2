@@ -72,6 +72,16 @@ ui <- navbarPage(
     navbarPage(
       theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
       "Análises",
+      tabPanel("Tentativas e erros",
+               h3("Quantidade de tentativas e erros por fundamento"),
+               h6("Selecione um fundamento"),
+               sidebarPanel(
+                 selectInput('stat_team','Fundamento', stats),
+                 selected = "ataques"
+               ),
+               plotOutput("plot3", click = "plot_click"),
+               uiOutput("table_click")
+      ),
       tabPanel("Vitórias",
          h3("Quantidade de vitórias por time"),
          radioButtons("fase_vitorias", "Selecione a fase do torneio:",

@@ -10,6 +10,53 @@ names(base) <- c("SET_1","SET_2","SET_3","SET_4","SET_5","Jogadora","Time","Part
 server <- function(input, output, session) {
   
   # Aba de times
+  ##
+  df_stats_team <-  base |> 
+    group_by(Time) |>
+    summarise(
+      recepcoes_total = sum(Recepcao_Tot, na.rm = T), 
+      recepcoes_erro = sum(Recepcao_Err, na.rm = T),
+      recepcoes_prop = recepcoes_erro / recepcoes_total,
+      ataques_total = sum(Ataque_Exc, na.rm = T), 
+      ataques_erro = sum(Ataque_Err, na.rm = T),
+      ataques_prop = ataques_erro / ataques_total
+    )
+  
+  df_chosen_team <- reactive({
+    df_stats_team |>
+      select(
+        Time,
+        glue(input$stat_team, '_total'),
+        glue(input$stat_team, '_erro'),
+        glue(input$stat_team, '_prop')
+      ) |>
+      rename(
+        quantidade_tentativas = glue(input$stat_team, '_total'),
+        quantidade_erros = glue(input$stat_team, '_erro'),
+        proporcao = glue(input$stat_team, '_prop')
+      ) |>
+      filter(quantidade_tentativas > 0)
+  })
+  
+  output$plot3 <- renderPlot({
+    ggplot(df_chosen_team(), mapping = aes(x = quantidade_tentativas, y = quantidade_erros)) +
+      geom_point() + 
+      labs(
+        x = "Quantidade de Tentativas",
+        y = "Quantidade de Erros"
+      )
+  })
+  
+  output$table_click <- renderUI({
+    if(is.null(input$plot_click)){
+      h4("Clique em um ponto no gráfico para informações detalhadas")
+    } else {
+      renderTable({
+        nearPoints(df_chosen_team(), input$plot_click)
+      })
+    }
+  })
+  ##
   output$tabela1 <- renderDataTable({
     filtro <- switch(input$fase_vitorias,
                    "classificatoria" = "playoffs",
