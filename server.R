@@ -3,6 +3,7 @@ library(tidyverse)
 library(DT)
 library(plotly)
 library(glue)
+library(scales)
 
 base <- read.csv("superliga_202122.csv")
 names(base) <- c("SET_1","SET_2","SET_3","SET_4","SET_5","Jogadora","Time","Partida","Vencedor","Servico_Err","Servico_Ace","Recepcao_Tot","Recepcao_Err","Ataque_Exc","Ataque_Err","Ataque_Blk","Bloqueio_Pts","Fase","Cat","Jogo","VV")
@@ -173,10 +174,11 @@ server <- function(input, output, session) {
     mutate(
       Cat = factor(Cat, levels = c("turno", "returno", "quartas", "semi", "final"))
     ) |>
-    rename(
-      Pontos_bloqueio = Bloqueio_Pts,
-      Ataques_bloqueados = Ataque_Blk,
-      Aces = Servico_Ace
+    group_by(Partida, Cat) |>
+    summarise(
+      Pontos_bloqueio = sum(Bloqueio_Pts, na.rm = TRUE),
+      Ataques_bloqueados = sum(Ataque_Blk, na.rm = TRUE),
+      Aces = sum(Servico_Ace, na.rm = TRUE)
     ) |>
     select(
       Cat,
@@ -200,6 +202,52 @@ server <- function(input, output, session) {
         x = "Fase secundária do torneio",
         y = "Quantidade"
       )
+  })
+  
+  df_sets <- base |>
+    select(SET_1, SET_2, SET_3, SET_4, SET_5, Cat, Partida) |>
+    mutate(
+      SET_4 = case_when(SET_4 == "" ~ FALSE, TRUE ~ TRUE),
+      SET_5 = case_when(SET_5 == "" ~ FALSE, TRUE ~ TRUE)
+    ) |>
+    group_by(Partida, Cat) |>
+    summarise(
+      qtd_sets_5 = sum(SET_5),
+      qtd_sets_4 = sum(SET_4)
+    ) |>
+    group_by(Partida, Cat) |>
+    summarise(
+      qtd_sets = case_when(
+        qtd_sets_5 > 0 ~ "Cinco",
+        qtd_sets_4 > 0 ~ "Quatro",
+        TRUE ~ "Três"
+      )
+    )
+
+  df_set_choices <- reactive({
+    filtro_turno   <- case_when(input$check_turno   == FALSE ~ "", TRUE ~ "turno")
+    filtro_returno <- case_when(input$check_returno == FALSE ~ "", TRUE ~ "returno")
+    filtro_quartas <- case_when(input$check_quartas == FALSE ~ "", TRUE ~ "quartas")
+    filtro_semi    <- case_when(input$check_semi    == FALSE ~ "", TRUE ~ "semi")
+    filtro_final   <- case_when(input$check_final   == FALSE ~ "", TRUE ~ "final")
+    
+    df_sets |>
+      filter(
+        Cat %in% c(filtro_turno, filtro_returno, filtro_quartas, filtro_semi, filtro_final)
+      ) |>
+      mutate(
+        qtd_sets = factor(qtd_sets, levels = c("Três", "Quatro", "Cinco"))
+      )
+  })
+  
+  output$barplot1 <- renderPlot({
+    ggplot(data = df_set_choices(), aes(x = qtd_sets)) +
+      geom_bar(aes(y = (..count..)/sum(..count..))) + 
+      labs(
+        x = "Quantidade de sets",
+        y = "Porcentagem"
+      ) +
+      scale_y_continuous(labels = percent)
   })
     
 }

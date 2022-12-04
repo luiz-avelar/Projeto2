@@ -107,8 +107,8 @@ ui <- navbarPage(
      navbarPage(
        theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
        "Análises",
-       tabPanel("Tentativas e erros",
-                h3("Média nos fundamento por fase secundária do torneio"),
+       tabPanel("Fundamentos por fase",
+                h3("Média dos fundamentos por partida em cada fase secundária do torneio"),
                 h6("Selecione um fundamento"),
                 sidebarPanel(
                   selectInput('fundamento_geral', label = 'Fundamento', choices = c("Pontos de Bloqueio", "Ataques Bloqueados", "Aces")),
@@ -116,6 +116,18 @@ ui <- navbarPage(
                 ),
                 plotOutput("boxplot1")
        ),
+       tabPanel("Sets por fase",
+                h3("Frequência de cada set por fase secundária do torneio"),
+                h6("Selecione quais fases considerar"),
+                sidebarPanel(
+                  checkboxInput('check_turno', label = 'turno', value = TRUE),
+                  checkboxInput('check_returno', label = 'returno', value = FALSE),
+                  checkboxInput('check_quartas', label = 'quartas', value = FALSE),
+                  checkboxInput('check_semi', label = 'semi', value = FALSE),
+                  checkboxInput('check_final', label = 'final',  value = FALSE)
+                ),
+                plotOutput("barplot1")
+       )
      ) 
   )
 )
