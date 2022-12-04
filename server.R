@@ -1,7 +1,10 @@
 library(shiny)
 library(tidyverse)
 library(DT)
+<<<<<<< HEAD
 library(plotly)
+=======
+>>>>>>> ed33b09bea87471f9f2337e743b4ac1a0aec15f6
 library(glue)
 
 base <- read.csv("superliga_202122.csv")
