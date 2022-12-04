@@ -26,7 +26,7 @@ server <- function(input, output, session) {
                      "Ambas" = ""
     )
     
-    base |> filter(Fase != filtro) |> group_by(Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV))
+    base |> filter(Fase != filtro) |> group_by(Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV)) |> filter(VV > 0)
   })
   
   # Aba jogadoras
@@ -53,7 +53,8 @@ server <- function(input, output, session) {
           quantidade_tentativas = glue(input$stat, '_total'),
           quantidade_erros = glue(input$stat, '_erro'),
           proporcao = glue(input$stat, '_prop')
-        )
+        ) |>
+        filter(quantidade_tentativas > 0)
     })
     
   output$plot1 <- renderPlot({
@@ -67,7 +68,7 @@ server <- function(input, output, session) {
   
   output$table_brush <- renderUI({
     if(is.null(input$plot_brush)){
-      h4("Destaque uma área no gráfico informações detalhadas")
+      h4("Destaque uma área no gráfico para informações detalhadas")
     } else {
       renderTable({
         brushedPoints(df_chosen(), input$plot_brush)
@@ -82,20 +83,75 @@ server <- function(input, output, session) {
                      "Ambas" = ""
     )
     
-    base |> filter(Fase != filtro) |> group_by(Jogadora, Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV))
+    base |> filter(Fase != filtro) |> group_by(Jogadora, Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV)) |> filter(VV > 0)
+  })
+  
+    df_jogos <- base |>
+      mutate(
+        titular = case_when(
+          !SET_1 %in% c('*', "") ~ TRUE,
+           SET_1 %in% c('*', "") ~ FALSE
+        )
+      ) |>
+      group_by(Jogadora) |>
+      summarise(
+        total_jogos = n_distinct(Jogo),
+        titular_jogos = sum(titular),
+        proporcao = titular_jogos / total_jogos
+      )
+    
+    output$plot2 <- renderPlot({
+      ggplot(df_jogos, mapping = aes(x = total_jogos, y = titular_jogos)) +
+        geom_point() + 
+        labs(
+          x = "Número de jogos",
+          y = "Número de jogos como titular"
+        )
+    })
+    
+    output$plot2_brush <- renderUI({
+      if(is.null(input$brush_quantidade_jogos)){
+        h4("Destaque uma área no gráfico para informações detalhadas")
+      } else {
+        renderTable({
+          brushedPoints(df_jogos, input$brush_quantidade_jogos)
+        })
+      }
+    })
+
+  # Aba geral
+  
+  df_fund <-  base |> 
+    mutate(
+      Cat = factor(Cat, levels = c("turno", "returno", "quartas", "semi", "final"))
+    ) |>
+    rename(
+      Pontos_bloqueio = Bloqueio_Pts,
+      Ataques_bloqueados = Ataque_Blk,
+      Aces = Servico_Ace
+    ) |>
+    select(
+      Cat,
+      Pontos_bloqueio,
+      Ataques_bloqueados,
+      Aces
+    )
+  
+  filtro_fund <- reactive({
+    switch(input$fundamento_geral,
+           "Pontos de Bloqueio" = "Pontos_bloqueio",
+           "Ataques Bloqueados" = "Ataques_bloqueados",
+           "Aces" = "Aces"
+    )
+  })
+  
+  output$boxplot1 <- renderPlot({
+    ggplot(df_fund) +
+      geom_boxplot(mapping = aes(Cat, filtro_fund())) + 
+      labs(
+        x = "Fase secundária do torneio",
+        y = "Quantidade"
+      )
   })
     
-# Rererência: https://community.plotly.com/t/incorporate-a-plotly-graph-into-a-shiny-app/5329
-  
-  y <- reactive({
-    base[,input$ycol]
-  })
-  
-  output$plot <- renderPlotly(
-    plot1 <- plot_ly(
-      y = y(),
-      x = base$Jogo, 
-      type = 'scatter',
-      mode = 'markers')
-  )
 }

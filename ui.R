@@ -22,17 +22,11 @@ ui <- navbarPage(
            uiOutput("table_brush")
       ),
       
-       tabPanel('Tentativa',
-         tabsetPanel(
-           sidebarPanel(
-             selectInput('stat','Estatística', stats),
-             selected = "ataques"
+       tabPanel('Quantidade de jogos', 
+                h3("Quantidade de jogos por jogadora"),
+                plotOutput("plot2", brush = "brush_quantidade_jogos"),
+                uiOutput("plot2_brush")
           ),
-          tabPanel("Stats",
-             plotlyOutput('plot')
-           )
-         )
-       ),
       
       tabPanel("Melhor da partida",
                h3("Quantidade de prêmios de melhor jogadora da partida por jogadora"),
@@ -71,6 +65,22 @@ ui <- navbarPage(
        tabPanel("tabela2", dataTableOutput("tabela2"))
       )
     ) 
+  ),
+  
+  tabPanel("Geral",
+     navbarPage(
+       theme = bslib::bs_theme(primary = "#5F2A90", secondary = "#90E124", success = "#DFB60B", bootswatch = "flatly"),
+       "Análises",
+       tabPanel("Tentativas e erros",
+                h3("Média nos fundamento por fase secundária do torneio"),
+                h6("Selecione um fundamento"),
+                sidebarPanel(
+                  selectInput('fundamento_geral', label = 'Fundamento', choices = c("Pontos de Bloqueio", "Ataques Bloqueados", "Aces")),
+                  selected = "Aces"
+                ),
+                plotOutput("boxplot1")
+       ),
+     ) 
   )
 )
 
