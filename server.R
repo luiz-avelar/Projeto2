@@ -10,11 +10,23 @@ server <- function(input, output, session) {
   
   # Aba de times
   output$tabela1 <- renderDataTable({
-    base|> group_by(Vencedor) |> summarise(Vitorias = n_distinct(Partida)) |> rename(Time = Vencedor) |> arrange(desc(Vitorias))
+    filtro <- switch(input$fase_vitorias,
+                   "classificatoria" = "playoffs",
+                   "playoffs" = "classificatoria",
+                   "Ambas" = ""
+                   )
+    
+    base|> filter(Fase != filtro) |> group_by(Vencedor) |> summarise(Vitorias = n_distinct(Partida)) |> rename(Time = Vencedor) |> arrange(desc(Vitorias))
   })
   
   output$tabela2 <- renderDataTable({
-    base|> group_by(Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV))
+    filtro <- switch(input$fase_vv,
+                     "classificatoria" = "playoffs",
+                     "playoffs" = "classificatoria",
+                     "Ambas" = ""
+    )
+    
+    base |> filter(Fase != filtro) |> group_by(Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV))
   })
   
   # Aba jogadoras
@@ -61,6 +73,16 @@ server <- function(input, output, session) {
         brushedPoints(df_chosen(), input$plot_brush)
       })
     }
+  })
+  
+  output$tabela3 <- renderDataTable({
+    filtro <- switch(input$fase_vv_jogadora,
+                     "classificatoria" = "playoffs",
+                     "playoffs" = "classificatoria",
+                     "Ambas" = ""
+    )
+    
+    base |> filter(Fase != filtro) |> group_by(Jogadora, Time) |> summarise(VV = sum(VV)) |> arrange(desc(VV))
   })
     
 # Rererência: https://community.plotly.com/t/incorporate-a-plotly-graph-into-a-shiny-app/5329

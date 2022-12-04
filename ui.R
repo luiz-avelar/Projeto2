@@ -12,17 +12,14 @@ ui <- navbarPage(
        "Análises",
        
        tabPanel("Tentativas e erros",
-           h3("Quantidade de tentativas e erros por estatística"),
-           h6("Destaque um ponto para informações detalhadas"),
+           h3("Quantidade de tentativas e erros por fundamento"),
+           h6("Selecione um fundamento"),
            sidebarPanel(
-             selectInput('stat','Estatística', stats),
+             selectInput('stat','Fundamento', stats),
              selected = "ataques"
            ),
            plotOutput("plot1", brush = "plot_brush"),
            uiOutput("table_brush")
-           # tableOutput("table1")
-           # plotOutput("plot1", brush = "plot_brush"), 
-           # tableOutput("table1")
       ),
       
        tabPanel('Tentativa',
@@ -35,7 +32,18 @@ ui <- navbarPage(
              plotlyOutput('plot')
            )
          )
-       )
+       ),
+      
+      tabPanel("Melhor da partida",
+               h3("Quantidade de prêmios de melhor jogadora da partida por jogadora"),
+               h4("O prêmio VivaVolêi(VV) é dado a melhor jogadora no final de cada partida"),
+               radioButtons("fase_vv_jogadora", "Selecione a fase do torneio:",
+                            c("Classificatória" = "classificatoria",
+                              "Playoff" = "playoffs",
+                              "Ambas" = "Ambas")),
+               tabPanel("tabela3", dataTableOutput("tabela3"))
+      )
+      
     )
   ),
   
@@ -46,11 +54,20 @@ ui <- navbarPage(
       "Análises",
       tabPanel("Vitórias",
          h3("Quantidade de vitórias por time"),
+         radioButtons("fase_vitorias", "Selecione a fase do torneio:",
+                      c("Classificatória" = "classificatoria",
+                        "Playoff" = "playoffs",
+                        "Ambas" = "Ambas")),
          tabPanel("tabela1", dataTableOutput("tabela1"))
       ),
       
       tabPanel("Melhor da partida",
        h3("Quantidade de prêmios de melhor jogadora da partida por time"),
+       h4("O prêmio VivaVolêi(VV) é dado a melhor jogadora no final de cada partida"),
+       radioButtons("fase_vv", "Selecione a fase do torneio:",
+                    c("Classificatória" = "classificatoria",
+                      "Playoff" = "playoffs",
+                      "Ambas" = "Ambas")),
        tabPanel("tabela2", dataTableOutput("tabela2"))
       )
     ) 
